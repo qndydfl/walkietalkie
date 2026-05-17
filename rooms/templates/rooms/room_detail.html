@@ -1,0 +1,149 @@
+{% extends "base.html" %} 
+{% load static %} 
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/room_detail.css' %}" />
+{% endblock css %} 
+
+{% block js %}
+<script>
+    window.ROOM_DATA = {
+        roomId: "{{ room.id }}",
+        currentUserId: "{{ user.id }}",
+    };
+</script>
+<script src="{% static 'js/room_detail.js' %}"></script>
+{% endblock js %} 
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card room-card">
+            <div class="card-body">
+                <h3 class="fw-bold">{{ room.title }}</h3>
+                <p class="text-muted">{{ room.description }}</p>
+
+                <div id="chat-box" class="chat-box mb-3">
+                    {% for msg in messages %}
+                    <div class="message">
+                        {% if msg.sender.profile_image %}
+                        <img
+                            src="{{ msg.sender.profile_image.url }}"
+                            class="rounded-circle me-1"
+                            style="width: 28px; height: 28px; object-fit: cover"
+                        />
+                        {% endif %}
+
+                        <strong>{{ msg.sender.nickname }}</strong>
+
+                        <small class="text-muted ms-2">
+                            {{ msg.created_at|date:"Y-m-d H:i" }}
+                        </small>
+
+                        <span class="badge bg-light text-dark ms-2">
+                            읽음 {{ msg.read_count }}
+                        </span>
+
+                        <div>{{ msg.content }}</div>
+                    </div>
+                    {% empty %}
+                    <div class="text-muted text-center py-4" id="empty-message">
+                        아직 메시지가 없습니다.
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="input-group mb-3">
+                    <select
+                        id="receiver"
+                        class="form-select"
+                        style="max-width: 180px"
+                    >
+                        <option value="">전체에게</option>
+                    </select>
+
+                    <input
+                        id="message-input"
+                        type="text"
+                        class="form-control"
+                        placeholder="메시지를 입력하세요"
+                    />
+
+                    <button id="send-btn" class="btn btn-primary">전송</button>
+                </div>
+
+                <div
+                    class="ptt-panel rounded-4 p-3 bg-light d-flex align-items-center justify-content-between gap-3"
+                >
+                    <div>
+                        <div class="fw-bold">음성 Push-To-Talk</div>
+                        <div id="ptt-status" class="text-muted small">
+                            대기 중
+                        </div>
+                    </div>
+
+                    <button
+                        id="ptt-btn"
+                        class="btn btn-danger rounded-pill px-4 py-2"
+                    >
+                        🎙️ 누르고 말하기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card room-card mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold">현재 입장한 사람</h5>
+                <div id="online-users" class="list-group mt-3"></div>
+
+                <hr />
+
+                <h6 class="fw-bold mt-3">방 멤버</h6>
+
+                <div class="list-group">
+                    {% for member in room_members %}
+                    <div
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                        <div>
+                            {{ member.nickname }}
+                            <div class="small text-muted">
+                                {{ member.name }}
+                            </div>
+                        </div>
+
+                        {% if member == room.owner %}
+                        <span class="badge bg-dark">방장</span>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="text-muted small">아직 멤버가 없습니다.</div>
+                    {% endfor %}
+                </div>
+
+                {% if room.owner == user %}
+                <hr />
+
+                <h6 class="fw-bold mt-3">사용자 초대</h6>
+
+                <form method="post" action="{% url 'room_invite' room.pk %}">
+                    {% csrf_token %}
+                    <div class="input-group mb-2">
+                        {{ invite_form.keyword }}
+                        <button class="btn btn-primary" type="submit">
+                            초대
+                        </button>
+                    </div>
+                    <div class="form-text">
+                        닉네임 또는 아이디를 정확히 입력하세요.
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

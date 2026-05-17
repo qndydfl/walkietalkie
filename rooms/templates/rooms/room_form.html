@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card room-card">
+            <div class="card-body p-4">
+                <h3 class="fw-bold mb-3">방 만들기</h3>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        {{ form.title.label_tag }}
+                        {{ form.title }}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.description.label_tag }}
+                        {{ form.description }}
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        {{ form.is_private }}
+                        <label class="form-check-label" for="{{ form.is_private.id_for_label }}">
+                            비공개 방으로 만들기
+                        </label>
+                        <div class="form-text">
+                            비공개 방은 방 목록에 표시되지 않고, 방장 또는 초대받은 사람만 입장할 수 있습니다.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.raw_password.label_tag }}
+                        {{ form.raw_password }}
+                        <div class="form-text">
+                            비워두면 비밀번호 없이 입장할 수 있습니다.
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary w-100 rounded-pill">
+                        방 만들기
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/room_list.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold">대화방</h2>
+        <p class="text-muted">누구나 방에 입장해서 대화할 수 있습니다.</p>
+    </div>
+    <a href="{% url 'room_create' %}" class="btn btn-primary rounded-pill px-4">
+        + 방 만들기
+    </a>
+</div>
+
+<div class="row g-4">
+    {% for room in rooms %}
+    <div class="col-md-4">
+        <div class="card room-card h-100">
+            <div class="card-body">
+                <h5 class="fw-bold">
+                    {% if room.has_password %}
+                        🔒
+                    {% else %}
+                        🔓
+                    {% endif %}
+                    {{ room.title }}
+                </h5>
+                <p class="text-muted">{{ room.description|default:"설명이 없습니다." }}</p>
+                <p class="small text-secondary">
+                    만든 사람: {{ room.owner.nickname }}
+                </p>
+                <a href="{% url 'room_detail' room.pk %}" class="btn btn-dark w-100 rounded-pill">
+                    입장하기
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">아직 방이 없습니다.</div>
+    </div>
+    {% endfor %}
+</div>
+
+<hr class="my-5">
+
+<h3 class="fw-bold mb-3">내 비공개 방</h3>
+
+<div class="row g-4">
+    {% for room in my_private_rooms %}
+    <div class="col-md-4">
+        <div class="card room-card h-100 border-primary">
+            <div class="card-body">
+                <h5 class="fw-bold">
+                    🔐 {{ room.title }}
+                </h5>
+                <p class="text-muted">{{ room.description|default:"설명이 없습니다." }}</p>
+                <p class="small text-secondary">
+                    만든 사람: {{ room.owner.nickname }}
+                </p>
+                <a href="{% url 'room_detail' room.pk %}" class="btn btn-primary w-100 rounded-pill">
+                    입장하기
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-light border">
+            참여 중인 비공개 방이 없습니다.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
