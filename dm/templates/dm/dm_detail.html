@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dm.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    window.DM_DATA = {
+        roomId: "{{ dm_room.id }}",
+        currentUserId: "{{ user.id }}"
+    };
+</script>
+<script defer src="{% static 'js/dm.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="dm-chat-card">
+    <div class="dm-chat-header">
+        <a href="{% url 'dm_list' %}" class="dm-back">‹</a>
+
+        {% if other_user.profile_image %}
+            <img src="{{ other_user.profile_image.url }}" class="dm-avatar">
+        {% else %}
+            <div class="dm-avatar-placeholder">
+                {{ other_user.nickname|first }}
+            </div>
+        {% endif %}
+
+        <div class="dm-chat-user">
+            <h2>{{ other_user.nickname }}</h2>
+            <p>{{ other_user.name }}</p>
+        </div>
+    </div>
+
+    <div id="dm-chat-box" class="dm-chat-box">
+        {% for msg in messages %}
+        <div class="dm-message {% if msg.sender == user %}mine{% endif %}">
+            <div class="dm-message-meta">
+                <strong>{{ msg.sender.nickname }}</strong>
+                <small>{{ msg.created_at|date:"H:i" }}</small>
+                <span>읽음 {{ msg.read_count }}</span>
+            </div>
+
+            <div class="dm-message-content">
+                {{ msg.content }}
+            </div>
+        </div>
+        {% empty %}
+        <div id="dm-empty-message" class="dm-empty in-chat">
+            <div class="dm-empty-icon">💬</div>
+            <strong>아직 대화가 없습니다</strong>
+            <p>첫 메시지를 보내보세요.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="dm-input-area">
+        <input
+            id="dm-message-input"
+            type="text"
+            class="form-control"
+            placeholder="메시지 입력"
+        >
+
+        <button id="dm-send-btn" class="btn btn-primary">
+            전송
+        </button>
+    </div>
+</div>
+{% endblock %}
+

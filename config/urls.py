@@ -35,6 +35,7 @@ urlpatterns = [
     
     path("accounts/", include("accounts.urls")),
     path("", include("rooms.urls")),
+    path("", include("dm.urls")),
 ]
 
 if settings.DEBUG:

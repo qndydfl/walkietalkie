@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dm.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dm-page">
+    <div class="dm-page-header">
+        <div>
+            <h2>💬 1:1 대화</h2>
+            <p>개인 대화 목록입니다.</p>
+        </div>
+    </div>
+
+    <div class="dm-list">
+        {% for room in dm_rooms %}
+            {% for member in room.users.all %}
+                {% if member != user %}
+                <a href="{% url 'dm_detail' room.pk %}" class="dm-item">
+                    {% if member.profile_image %}
+                        <img src="{{ member.profile_image.url }}" class="dm-avatar">
+                    {% else %}
+                        <div class="dm-avatar-placeholder">
+                            {{ member.nickname|first }}
+                        </div>
+                    {% endif %}
+
+                    <div class="dm-info">
+                        <strong>{{ member.nickname }}</strong>
+                        <p>{{ member.name }}</p>
+                    </div>
+
+                    <span class="dm-arrow">›</span>
+                </a>
+                {% endif %}
+            {% endfor %}
+        {% empty %}
+        <div class="dm-empty">
+            <div class="dm-empty-icon">💬</div>
+            <strong>아직 1:1 대화가 없습니다</strong>
+            <p>방 멤버 목록에서 1:1 버튼을 눌러 대화를 시작하세요.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

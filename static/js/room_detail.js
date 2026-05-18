@@ -81,13 +81,13 @@ chatSocket.onmessage = function (e) {
     div.className = "message" + (isPrivate ? " private" : "");
 
     div.innerHTML = `
-            <strong>${escapeHtml(data.sender)}</strong>
-            ${isPrivate ? '<span class="badge bg-warning text-dark ms-2">개인 메시지</span>' : ""}
-            <small class="text-muted ms-2">${escapeHtml(data.created_at || "")}</small>
-            <span class="badge bg-light text-dark ms-2">
-                읽음 ${data.read_count || 1}
-            </span>
-            <div>${escapeHtml(data.message)}</div>
+            <div class="message-meta">
+                <strong>${escapeHtml(data.sender)}</strong>
+                ${isPrivate ? '<span class="badge bg-warning text-dark ms-2">개인 메시지</span>' : ""}
+                <small>${escapeHtml(data.created_at || "")}</small>
+                <span class="read-badge">읽음 ${data.read_count || 1}</span>
+            </div>
+            <div class="message-content">${escapeHtml(data.message)}</div>
         `;
 
     chatBox.appendChild(div);

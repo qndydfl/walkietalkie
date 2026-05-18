@@ -1,4 +1,4 @@
-from django.views.generic import ListView, CreateView, DetailView, FormView, View
+from django.views.generic import ListView, CreateView, DetailView, FormView, View, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
@@ -148,3 +148,47 @@ class InviteUserView(LoginRequiredMixin, View):
             messages.success(request, f"{user.nickname}님을 초대했습니다.")
 
         return redirect("room_detail", pk=room.pk)
+    
+
+class RoomDeleteView(LoginRequiredMixin, DeleteView):
+    model = Room
+    success_url = reverse_lazy("room_list")
+
+    def dispatch(self, request, *args, **kwargs):
+        room = get_object_or_404(
+            Room,
+            pk=self.kwargs["pk"]
+        )
+
+        is_owner = room.owner == request.user
+        is_admin = request.user.is_staff
+
+        if not (is_owner or is_admin):
+            messages.error(
+                request,
+                "방장 또는 관리자만 삭제할 수 있습니다."
+            )
+
+            return redirect("room_list")
+
+        self.object = room
+
+        return super().dispatch(
+            request,
+            *args,
+            **kwargs
+        )
+
+    def delete(self, request, *args, **kwargs):
+        room_name = self.get_object().title
+
+        messages.success(
+            request,
+            f"{room_name} 방이 삭제되었습니다."
+        )
+
+        return super().delete(
+            request,
+            *args,
+            **kwargs
+        )

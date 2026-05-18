@@ -1,19 +1,60 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/account_form.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card room-card">
-            <div class="card-body p-4">
-                <h3 class="fw-bold mb-3">회원가입</h3>
-
-                <form method="post">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button class="btn btn-success w-100 rounded-pill">가입하기</button>
-                </form>
-            </div>
+<div class="account-page">
+    <div class="account-card">
+        <div class="account-header">
+            <div class="account-icon">📝</div>
+            <h2>회원가입</h2>
+            <p>이름과 닉네임을 입력하고 시작하세요.</p>
         </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="account-field">
+                <label for="{{ form.username.id_for_label }}">아이디</label>
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+
+            <div class="account-field">
+                <label for="{{ form.name.id_for_label }}">이름</label>
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
+
+            <div class="account-field">
+                <label for="{{ form.nickname.id_for_label }}">닉네임</label>
+                {{ form.nickname }}
+                {{ form.nickname.errors }}
+            </div>
+
+            <div class="account-field">
+                <label for="{{ form.password1.id_for_label }}">비밀번호</label>
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </div>
+
+            <div class="account-field">
+                <label for="{{ form.password2.id_for_label }}">비밀번호 확인</label>
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </div>
+
+            <button class="btn btn-primary w-100 rounded-pill account-submit">
+                가입하기
+            </button>
+
+            <a href="{% url 'login' %}" class="btn btn-light w-100 rounded-pill mt-2">
+                이미 계정이 있어요
+            </a>
+        </form>
     </div>
 </div>
 {% endblock %}
