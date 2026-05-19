@@ -20,11 +20,49 @@ let audioChunks = [];
 let audioStream = null;
 let isRecording = false;
 
+function getMicrophonePrecheckError() {
+    if (!window.isSecureContext) {
+        return "마이크 사용 불가: HTTPS 또는 localhost 접속이 필요합니다.";
+    }
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+        return "마이크 사용 불가: 브라우저가 getUserMedia를 지원하지 않습니다.";
+    }
+
+    if (typeof MediaRecorder === "undefined") {
+        return "마이크 사용 불가: 브라우저가 MediaRecorder를 지원하지 않습니다.";
+    }
+
+    return null;
+}
+
+function setPTTUnavailable(reason) {
+    pttBtn.disabled = true;
+    pttBtn.classList.remove("btn-danger", "btn-warning");
+    pttBtn.classList.add("btn-secondary");
+    pttBtn.innerText = "🎙️ 사용 불가";
+    pttStatus.innerText = reason;
+}
+
 function escapeHtml(text) {
     const div = document.createElement("div");
     div.innerText = text || "";
     return div.innerHTML;
 }
+
+chatSocket.onopen = function () {
+    sendBtn.disabled = false;
+};
+
+chatSocket.onerror = function (error) {
+    console.error("WebSocket error:", error);
+};
+
+chatSocket.onclose = function () {
+    sendBtn.disabled = true;
+    pttBtn.disabled = true;
+    pttStatus.innerText = "서버 연결이 끊겼습니다. 페이지를 새로고침해 주세요.";
+};
 
 chatSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
@@ -100,12 +138,23 @@ function sendMessage() {
 
     if (!message) return;
 
-    chatSocket.send(
-        JSON.stringify({
-            message: message,
-            receiver_id: receiverId,
-        }),
-    );
+    if (chatSocket.readyState !== WebSocket.OPEN) {
+        alert("채팅 서버 연결 중입니다. 잠시 후 다시 시도해 주세요.");
+        return;
+    }
+
+    try {
+        chatSocket.send(
+            JSON.stringify({
+                message: message,
+                receiver_id: receiverId,
+            }),
+        );
+    } catch (error) {
+        console.error("메시지 전송 실패:", error);
+        alert("메시지 전송에 실패했습니다. 페이지를 새로고침해 주세요.");
+        return;
+    }
 
     input.value = "";
 }
@@ -121,6 +170,14 @@ input.addEventListener("keyup", function (e) {
 async function initMicrophone() {
     if (audioStream) {
         return audioStream;
+    }
+
+    if (!window.isSecureContext) {
+        throw new Error("INSECURE_CONTEXT");
+    }
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error("GET_USER_MEDIA_UNSUPPORTED");
     }
 
     audioStream = await navigator.mediaDevices.getUserMedia({
@@ -176,7 +233,25 @@ async function startPTT() {
         pttBtn.innerText = "🔴 송신 중...";
         pttStatus.innerText = "말하는 중입니다.";
     } catch (error) {
-        alert("마이크 권한이 필요합니다.");
+        let message = "마이크를 사용할 수 없습니다.";
+
+        if (error?.message === "INSECURE_CONTEXT") {
+            message =
+                "마이크는 HTTPS 또는 localhost 접속에서만 사용할 수 있습니다.";
+        } else if (error?.message === "GET_USER_MEDIA_UNSUPPORTED") {
+            message = "현재 브라우저/환경에서 마이크 기능을 지원하지 않습니다.";
+        } else if (error?.name === "NotAllowedError") {
+            message =
+                "마이크 권한이 거부되었습니다. 주소창의 사이트 권한에서 마이크를 허용해 주세요.";
+        } else if (error?.name === "NotFoundError") {
+            message = "사용 가능한 마이크 장치를 찾지 못했습니다.";
+        } else if (error?.name === "NotReadableError") {
+            message =
+                "마이크를 다른 앱이 사용 중입니다. 다른 앱을 종료하고 다시 시도해 주세요.";
+        }
+
+        alert(message);
+        pttStatus.innerText = "마이크 사용 불가";
         console.error(error);
     }
 }
@@ -209,4 +284,18 @@ pttBtn.addEventListener("touchend", function (e) {
 
 window.addEventListener("load", function () {
     chatBox.scrollTop = chatBox.scrollHeight;
+
+    if (chatSocket.readyState !== WebSocket.OPEN) {
+        sendBtn.disabled = true;
+    }
+
+    const precheckError = getMicrophonePrecheckError();
+    if (precheckError) {
+        setPTTUnavailable(precheckError);
+        console.warn(precheckError, {
+            protocol: window.location.protocol,
+            host: window.location.host,
+            isSecureContext: window.isSecureContext,
+        });
+    }
 });
