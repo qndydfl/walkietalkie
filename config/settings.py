@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,20 +25,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-6^=2e6uez$n!683$_tq+9v(j&jr^1usyq&o#b%s73s^@e)znrq"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # 배포 단계
-DEBUG = False
+# DEBUG = False
 
-ALLOWED_HOSTS = [
-    "http://110.165.19.133/",
-]
+# ALLOWED_HOSTS = [
+#     "110.165.19.133",
+# ]
 
 # 개발 단계 ---------------
 
-# - DEBUG = True
-# - ALLOWED_HOSTS = []
+DEBUG = os.getenv("DEBUG", "True") == "True"
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 
 # Application definition
@@ -165,3 +171,9 @@ LOGOUT_REDIRECT_URL = "login"
 
 
 AUTH_USER_MODEL = "accounts.User"
+
+
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS",
+    ""
+).split(",")
