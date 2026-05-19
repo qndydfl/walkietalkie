@@ -1,23 +1,22 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends "base.html" %} 
+{% load static %} 
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/room_detail.css' %}">
-{% endblock %}
+<link rel="stylesheet" href="{% static 'css/room_detail.css' %}" />
+{% endblock %} 
 
 {% block extra_js %}
 <script>
     window.ROOM_DATA = {
         roomId: "{{ room.id }}",
-        currentUserId: "{{ user.id }}"
+        currentUserId: "{{ user.id }}",
     };
 </script>
 <script defer src="{% static 'js/room_detail.js' %}"></script>
-{% endblock %}
+{% endblock %} 
 
 {% block content %}
 <div class="room-detail-page">
-
     <section class="chat-app-card">
         <div class="chat-room-header">
             <div>
@@ -25,9 +24,7 @@
                 <p>{{ room.description|default:"설명이 없습니다." }}</p>
             </div>
 
-            <span class="room-status-badge">
-                📡 LIVE
-            </span>
+            <span class="room-status-badge"> 📡 LIVE </span>
         </div>
 
         <div id="chat-box" class="chat-box">
@@ -35,25 +32,24 @@
             <div class="message">
                 <div class="message-meta">
                     {% if msg.sender.profile_image %}
-                        <img src="{{ msg.sender.profile_image.url }}" class="message-avatar">
+                    <img
+                        src="{{ msg.sender.profile_image.url }}"
+                        class="message-avatar"
+                    />
                     {% else %}
-                        <span class="message-avatar-placeholder">
-                            {{ msg.sender.nickname|first }}
-                        </span>
+                    <span class="message-avatar-placeholder">
+                        {{ msg.sender.nickname|first }}
+                    </span>
                     {% endif %}
 
                     <strong>{{ msg.sender.nickname }}</strong>
 
                     <small>{{ msg.created_at|date:"H:i" }}</small>
 
-                    <span class="read-badge">
-                        읽음 {{ msg.read_count }}
-                    </span>
+                    <span class="read-badge"> 읽음 {{ msg.read_count }} </span>
                 </div>
 
-                <div class="message-content">
-                    {{ msg.content }}
-                </div>
+                <div class="message-content">{{ msg.content }}</div>
             </div>
             {% empty %}
             <div class="empty-chat" id="empty-message">
@@ -74,7 +70,7 @@
                     type="text"
                     class="form-control message-input"
                     placeholder="메시지"
-                >
+                />
 
                 <button id="send-btn" class="btn btn-primary send-btn">
                     전송
@@ -101,7 +97,7 @@
         </div>
 
         <div class="side-card">
-            <h5>방 멤버</h5>            
+            <h5>방 멤버</h5>
 
             <div class="list-group side-list">
                 {% for member in room_members %}
@@ -112,23 +108,20 @@
                     </div>
 
                     {% if member == room.owner %}
-                        <span class="badge bg-dark">방장</span>
-                    {% endif %}
-
-                    {% if member != user %}
+                    <span class="badge bg-dark">방장</span>
+                    {% endif %} {% if member != user %}
                     <form method="post" action="{% url 'dm_start' member.id %}">
                         {% csrf_token %}
-                        <button class="btn btn-sm btn-outline-primary rounded-pill">
+                        <button
+                            class="btn btn-sm btn-outline-primary rounded-pill"
+                        >
                             1:1
                         </button>
                     </form>
                     {% endif %}
-                    
                 </div>
                 {% empty %}
-                <div class="text-muted small">
-                    아직 멤버가 없습니다.
-                </div>
+                <div class="text-muted small">아직 멤버가 없습니다.</div>
                 {% endfor %}
             </div>
         </div>
@@ -141,140 +134,11 @@
                 {% csrf_token %}
                 <div class="input-group">
                     {{ invite_form.keyword }}
-                    <button class="btn btn-primary" type="submit">
-                        초대
-                    </button>
+                    <button class="btn btn-primary" type="submit">초대</button>
                 </div>
             </form>
         </div>
         {% endif %}
     </section>
-
 </div>
 {% endblock %}
-
-
-
-{% comment %} {% extends "base.html" %} 
-{% load static %} 
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/room_detail.css' %}" />
-{% endblock extra_css %} 
-
-{% block extra_js %}
-<script>
-    window.ROOM_DATA = {
-        roomId: "{{ room.id }}",
-        currentUserId: "{{ user.id }}",
-    };
-</script>
-<script defer src="{% static 'js/room_detail.js' %}"></script>
-{% endblock extra_js %} 
-
-{% block content %}
-<div class="row g-3 chat-layout">
-    <div class="col-md-8">
-        <div class="card room-card chat-card">
-            <div class="card-body">
-                <div class="chat-header">
-                    <h5 class="fw-bold mb-1">{{ room.title }}</h5>
-                    <div class="text-muted small">{{ room.description }}</div>
-                </div>
-
-                <div id="chat-box" class="chat-box">
-                    {% for msg in messages %}
-                    <div class="message">
-                        {% if msg.sender.profile_image %}
-                            <img src="{{ msg.sender.profile_image.url }}"
-                                class="rounded-circle me-1"
-                                style="width: 26px; height: 26px; object-fit: cover;">
-                        {% endif %}
-                        <strong>{{ msg.sender.nickname }}</strong>
-                        <small class="text-muted ms-2">{{ msg.created_at|date:"H:i" }}</small>
-                        <span class="badge bg-light text-dark ms-1">읽음 {{ msg.read_count }}</span>
-                        <div>{{ msg.content }}</div>
-                    </div>
-                    {% empty %}
-                    <div class="text-muted text-center py-4" id="empty-message">
-                        아직 메시지가 없습니다.
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <div class="chat-input-area">
-                    <div class="input-group">
-                        <select id="receiver" class="form-select" style="max-width: 120px;">
-                            <option value="">전체</option>
-                        </select>
-
-                        <input id="message-input"
-                            type="text"
-                            class="form-control"
-                            placeholder="메시지">
-
-                        <button id="send-btn" class="btn btn-primary">
-                            전송
-                        </button>
-                    </div>
-
-                    <div class="ptt-panel d-flex align-items-center justify-content-between gap-3">
-                        <div>
-                            <div class="fw-bold">무전 송신</div>
-                            <div id="ptt-status" class="text-muted small">대기 중</div>
-                        </div>
-
-                        <button id="ptt-btn" class="btn btn-danger rounded-pill px-4 py-2">
-                            🎙️ 말하기
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card room-card side-panel">
-            <div class="card-body">
-                <h6 class="fw-bold">현재 입장한 사람</h6>
-                <div id="online-users" class="list-group mt-2"></div>
-
-                <hr>
-
-                <h6 class="fw-bold">방 멤버</h6>
-                <div class="list-group">
-                    {% for member in room_members %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            {{ member.nickname }}
-                            <div class="small text-muted">{{ member.name }}</div>
-                        </div>
-
-                        {% if member == room.owner %}
-                            <span class="badge bg-dark">방장</span>
-                        {% endif %}
-                    </div>
-                    {% empty %}
-                    <div class="text-muted small">아직 멤버가 없습니다.</div>
-                    {% endfor %}
-                </div>
-
-                {% if room.owner == user %}
-                <hr>
-
-                <h6 class="fw-bold">사용자 초대</h6>
-                <form method="post" action="{% url 'room_invite' room.pk %}">
-                    {% csrf_token %}
-                    <div class="input-group">
-                        {{ invite_form.keyword }}
-                        <button class="btn btn-primary" type="submit">
-                            초대
-                        </button>
-                    </div>
-                </form>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %} {% endcomment %}

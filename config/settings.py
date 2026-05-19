@@ -36,9 +36,9 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 # 개발 단계 ---------------
 
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -149,20 +149,24 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels.layers.InMemoryChannelLayer",
-#     }
-# }
+REDIS_HOST = os.getenv("REDIS_HOST", "").strip()
+REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 
-CHANNEL_LAYERS = {    
-    "default": {        
-        "BACKEND": "channels_redis.core.RedisChannelLayer",        
-        "CONFIG": {            
-            "hosts": [("127.0.0.1", 6379)],
-        },    
-    },    
-}
+if REDIS_HOST:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [(REDIS_HOST, REDIS_PORT)],
+            },
+        },
+    }
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        }
+    }
 
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "room_list"

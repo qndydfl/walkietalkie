@@ -223,7 +223,9 @@
     }
 
     .chat-app-card {
-        height: calc(100vh - var(--header-height) - var(--bottom-nav-height) - 18px);
+        height: calc(
+            100vh - var(--header-height) - var(--bottom-nav-height) - 18px
+        );
         border-radius: 24px;
     }
 
@@ -238,7 +240,9 @@
     }
 
     .chat-app-card {
-        height: calc(100vh - var(--header-height) - var(--bottom-nav-height) - 12px);
+        height: calc(
+            100vh - var(--header-height) - var(--bottom-nav-height) - 12px
+        );
         border-radius: 22px;
     }
 
@@ -316,6 +320,19 @@
     .ptt-btn {
         font-size: 0.82rem;
         padding: 8px 14px;
+    }
+
+    .side-card .input-group .form-control {
+        font-size: 0.8rem;
+        line-height: 1.2;
+        padding: 6px 10px;
+    }
+
+    .side-card .input-group .btn {
+        font-size: 0.8rem;
+        line-height: 1.2;
+        padding: 6px 10px;
+        white-space: nowrap;
     }
 
     .side-card {
