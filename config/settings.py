@@ -29,17 +29,16 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # 배포 단계
-# DEBUG = False
-
-# ALLOWED_HOSTS = [
-#     "110.165.19.133",
-# ]
-
-# 개발 단계 ---------------
-
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+
+
+# 개발 단계 ---------------
+
+DEBUG = True
+
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -173,7 +172,7 @@ LOGOUT_REDIRECT_URL = "login"
 AUTH_USER_MODEL = "accounts.User"
 
 
-CSRF_TRUSTED_ORIGINS = os.getenv(
-    "CSRF_TRUSTED_ORIGINS",
-    ""
-).split(",")
+# CSRF_TRUSTED_ORIGINS = os.getenv(
+#     "CSRF_TRUSTED_ORIGINS",
+#     ""
+# ).split(",")
