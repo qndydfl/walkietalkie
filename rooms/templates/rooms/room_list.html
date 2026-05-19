@@ -34,9 +34,7 @@
                         <h5 class="room-title">
                             {% if room.is_private %} 🔐 
                             {% elif room.has_password %} 🔒 
-                            {% else %} 🔓 
-                            {% endif %} 
-                            {{ room.title }}
+                            {% else %} 🔓 {% endif %} {{ room.title }}
                         </h5>
 
                         <div class="room-owner">
@@ -76,25 +74,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    {% empty %}
-
-    <div class="col-12">
-        <div class="empty-room-card">
-            <div class="empty-icon">📻</div>
-
-            <div class="empty-title">아직 생성된 방이 없습니다</div>
-
-            <div class="empty-text">첫 번째 방을 만들어 보세요</div>
-
-            <a
-                href="{% url 'room_create' %}"
-                class="btn btn-primary rounded-pill mt-3"
-            >
-                방 만들기
-            </a>
         </div>
     </div>
 
@@ -145,7 +124,26 @@
         </div>
     </div>
 
-    {% endif %} {% endfor %}
+    {% endif %} {% empty %}
+
+    <div class="col-12">
+        <div class="empty-room-card">
+            <div class="empty-icon">📻</div>
+
+            <div class="empty-title">아직 생성된 방이 없습니다</div>
+
+            <div class="empty-text">첫 번째 방을 만들어 보세요</div>
+
+            <a
+                href="{% url 'room_create' %}"
+                class="btn btn-primary rounded-pill mt-3"
+            >
+                방 만들기
+            </a>
+        </div>
+    </div>
+
+    {% endfor %}
 </div>
 
 {% if my_private_rooms %}

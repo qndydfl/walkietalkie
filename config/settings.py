@@ -23,9 +23,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-6^=2e6uez$n!683$_tq+9v(j&jr^1usyq&o#b%s73s^@e)znrq"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# 배포 단계
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "http://110.165.19.133/",
+]
+
+# 개발 단계 ---------------
+
+# - DEBUG = True
+# - ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -136,12 +144,20 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    }
-}
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     }
+# }
 
+CHANNEL_LAYERS = {    
+    "default": {        
+        "BACKEND": "channels_redis.core.RedisChannelLayer",        
+        "CONFIG": {            
+            "hosts": [("127.0.0.1", 6379)],
+        },    
+    },    
+}
 
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "room_list"

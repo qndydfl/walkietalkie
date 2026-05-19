@@ -155,40 +155,23 @@ class RoomDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("room_list")
 
     def dispatch(self, request, *args, **kwargs):
-        room = get_object_or_404(
-            Room,
-            pk=self.kwargs["pk"]
-        )
+        room = get_object_or_404(Room, pk=self.kwargs["pk"])
 
         is_owner = room.owner == request.user
         is_admin = request.user.is_staff
 
         if not (is_owner or is_admin):
-            messages.error(
-                request,
-                "방장 또는 관리자만 삭제할 수 있습니다."
-            )
-
+            messages.error(request, "방장 또는 관리자만 삭제할 수 있습니다.")
             return redirect("room_list")
 
-        self.object = room
+        return super().dispatch(request, *args, **kwargs)
 
-        return super().dispatch(
-            request,
-            *args,
-            **kwargs
-        )
-
-    def delete(self, request, *args, **kwargs):
-        room_name = self.get_object().title
+    def form_valid(self, form):
+        room_name = self.object.title
 
         messages.success(
-            request,
+            self.request,
             f"{room_name} 방이 삭제되었습니다."
         )
 
-        return super().delete(
-            request,
-            *args,
-            **kwargs
-        )
+        return super().form_valid(form)
