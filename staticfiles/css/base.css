@@ -1,0 +1,199 @@
+:root {
+    --app-bg: #f3f6fb;
+    --app-dark: #111827;
+    --app-primary: #2563eb;
+    --app-card: #ffffff;
+    --app-border: #e5e7eb;
+    --bottom-nav-height: 72px;
+    --header-height: 62px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--app-bg);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.app-shell {
+    min-height: 100vh;
+    background: var(--app-bg);
+}
+
+.app-header {
+    height: var(--header-height);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: linear-gradient(135deg, #111827, #2563eb);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
+}
+
+.app-brand {
+    color: white;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.app-user {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.app-user img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.7);
+}
+
+.app-main {
+    padding: 16px;
+    padding-bottom: calc(var(--bottom-nav-height) + 18px);
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.app-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--bottom-nav-height);
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid var(--app-border);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+}
+
+.app-bottom-nav a {
+    flex: 1;
+    text-align: center;
+    color: #374151;
+    text-decoration: none;
+    font-size: 20px;
+    line-height: 1.1;
+}
+
+.app-bottom-nav span {
+    display: block;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.room-card {
+    border: 0;
+    border-radius: 24px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+@media (min-width: 992px) {
+    .app-bottom-nav {
+        display: none;
+    }
+
+    .app-main {
+        padding-bottom: 32px;
+    }
+}
+
+.app-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.app-header-link,
+.app-signup-btn,
+.app-logout-btn {
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+
+.app-signup-btn,
+.app-logout-btn {
+    border: 1px solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    border-radius: 999px;
+    padding: 6px 11px;
+}
+
+.app-logout-btn {
+    cursor: pointer;
+}
+
+.app-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.app-bottom-form {
+    flex: 1;
+    margin: 0;
+}
+
+.app-bottom-form button {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: #374151;
+    font-size: 20px;
+    line-height: 1.1;
+}
+
+.app-bottom-form span {
+    display: block;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+@media (max-width: 575px) {
+    .app-brand {
+        font-size: 14px;
+    }
+
+    .app-header-actions {
+        gap: 5px;
+    }
+
+    .app-header-link,
+    .app-signup-btn,
+    .app-logout-btn,
+    .app-user span {
+        font-size: 11px;
+    }
+
+    .app-user img,
+    .app-user-avatar {
+        width: 28px;
+        height: 28px;
+    }
+}
